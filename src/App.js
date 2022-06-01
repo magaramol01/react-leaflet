@@ -1,11 +1,10 @@
 import React, {   useState } from "react";
-import {  MapContainer,TileLayer, Marker, Popup, LayersControl, LayerGroup, Circle, FeatureGroup, useMapEvents, Polyline, } from "react-leaflet";
-import L, { map } from "leaflet"
+import {  MapContainer,TileLayer, Marker, Popup, LayersControl, LayerGroup,  useMapEvents, Polyline, Tooltip, } from "react-leaflet";
+import L from "leaflet"
 import MouseCoordinates from "./hooks/MouseCoordinates"
 import Nroute from "./Nroute"
 import "leaflet-marker-rotation";
 
-// import PolylineDecorator from "./hooks/PolylineDecorator"
 
 
 function GetIcon(iconsize){
@@ -23,6 +22,14 @@ function Licon(iconsize) {
     iconUrl: require("../src/Static/icon/Licon.png"),
     iconSize: new L.Point(160),
     iconAnchor: [10, 80],
+  });
+}
+
+function Dicon(iconsize) {
+  return L.icon({
+    iconUrl: require("../src/Static/icon/dot.png"),
+    iconSize: new L.Point(8),
+    iconAnchor: [7, 5],
   });
 }
 
@@ -53,14 +60,8 @@ const App = () => {
   
 const [zoomLevel, setZoomLevel] = useState(5);
 
-//marker rotate 
-  const [markerAngle, setMarkerAngle] = useState(120);
-
-
-
 
 const polyline = Nroute;
-
  
 function MyComponent() {
 
@@ -85,8 +86,36 @@ function MyComponent() {
         style={{ minHeight: "100vh", minWidth: "100%" }}
       >
         <MyComponent />
-        {/* <PolylineDecorator patterns={arrow} positions={polyline} /> */}
+
         <MouseCoordinates />
+
+        {polyline.map((CurE, index) => {
+          console.log(CurE[0], CurE[1]);
+
+          return (
+            <Marker position={[CurE[0], CurE[1]]} icon={Dicon()}>
+              <Tooltip direction="left">
+                <ul style={{ fontSize: "13px" }}>
+                  <h3 style={{ margin: "auto" }}>MEDAN EXPRESS</h3>
+                  <li>
+                    Lat : {CurE[0]} , Long: {CurE[1]}
+                  </li>
+                  <li>Speed Over Ground : {CurE[0]} Kn</li>
+                  <li>Wave Direction : {CurE[1] + 20}°</li>
+                  <li>Wave Height : {CurE[1] - 5} mts</li>
+                  <li>Swell direction : {CurE[1] - 7}°</li>
+                  <li>Swell Height : {CurE[1] + 7} mts</li>
+                  <li>Wind Speed : {CurE[1] + 10} kn</li>
+                  <li>Wind direction : {CurE[1] + 2.42}°</li>
+                  <li>Current Speed : {CurE[1] - 2.42} kn</li>
+                  <li>Current direction : {CurE[1] - 9.42}°</li>
+                  <li> Timestamp :26-02-2022 12:02:54</li>
+                </ul>
+              </Tooltip>
+            </Marker>
+          );
+        })}
+
         <LayersControl position="topright">
           <BaseLayer name="Map-Style-1">
             <TileLayer
@@ -112,12 +141,12 @@ function MyComponent() {
               <>
                 <LayerGroup>
                   {zoomLevel > 14 ? (
-                    <Marker position={ [-20.6344, 60.4088 ]} icon={Licon()}>
-                      <Popup>why you here</Popup>
+                    <Marker position={[5.93679, 96.728896]} icon={Licon()}>
+                      <Tooltip>MEDAN EXPRESS</Tooltip>
                     </Marker>
                   ) : (
-                    <Marker position={ [-20.6344, 60.4088 ]} icon={GetIcon(48)}>
-                      <Popup>why you here</Popup>
+                    <Marker position={[5.93679, 96.728896]} icon={GetIcon(48)}>
+                      <Tooltip position="top">MEDAN EXPRESS</Tooltip>
                     </Marker>
                   )}
 
@@ -142,7 +171,7 @@ function MyComponent() {
           </LayersControl.Overlay>
 
           <LayersControl.Overlay checked name="Route">
-            <Polyline color="red  " positions={polyline} />
+            <Polyline color="#F32424" positions={polyline} />
             <Marker position={[-32.171, -52.0864]} icon={Lmarker()}>
               <Popup>you are here</Popup>
             </Marker>
